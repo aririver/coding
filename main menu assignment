@@ -1,0 +1,371 @@
+# calls all created functions, does not do any code
+def main():
+    goAgain = True
+
+    examScores = []
+
+    while (goAgain):
+
+        choice = getChoice()
+
+        print("\n" * 2)
+
+        if (choice == "I"):  # allows the user to input their scores in a list
+            inputScores(examScores)
+
+        elif (choice == "D"):  # this choice is the diplay all scores
+            dispScores(examScores)
+
+        elif (choice == "S"):  # shows stats of all given scores
+            statsOfScores(examScores)
+
+        elif (choice == "A"):  # subtracts the scores by 5 and shows the new adjusted scores
+            adjScoresPrint(examScores)
+            examScores = adjScoresPerm(examScores)
+
+        elif (choice == "R"):  # removes Fs permanentley from the list
+            removeFPrint(examScores)
+            examScores = removeFPerm(examScores)
+
+        elif (choice == "Q"):  # quits the program
+            marquee("G O O D  B Y E")
+            goAgain = False  # stops the while loop
+
+        else:  # if neither option from the menu is chosen
+            marquee("ENTER AN OPTION FROM MAIN MENU", "!")
+            pause()
+
+
+# -----------------------------------------------
+# removes 5 points from each score in the current list of scores
+def adjScoresPrint(scoreList):
+    if (len(scoreList) != 0):  # if the list is not empty, continue
+
+        marquee("Adjusted Scores by 5", "-")
+        adjList = []  # new list for adjusted scores
+
+        print("Old Scores", "\t", "New Scores")
+
+        adjList = adjScoresPerm(scoreList)
+
+        for i in range(len(scoreList)):
+            print(gradeLetterRet(scoreList[i]), "-", scoreList[i], "\t",
+                  gradeLetterRet(adjList[i]), "-", adjList[i])
+
+        pause()
+
+    else:  # if the list is empty, yell at the user
+        marquee("The list is empty.", "*")
+        pause()
+
+
+# -----------------------------------------------------------
+# this is the return function to permenately change the primary list in main
+def adjScoresPerm(scoreList):
+    adjList = []  # new list for adjusted scores
+
+    for i in range(len(scoreList)):  # appends the subtracted scores into the new list
+
+        if ((scoreList[i] - 5) >= 0):
+            adjList.append(scoreList[i] - 5)  # appends adjusted score
+        else:
+            adjList.append(0)  # appends 0 if score - 5 is less than 0
+
+    return adjList  # returns adjusted list
+
+
+# --------------------------------------------------
+# organizes the display option and gives the user a sub menu for both choices
+def dispScores(scoreList):
+    if (len(scoreList) != 0):
+        marquee("Choose Assortment")
+
+        print("[H]ighest to Lowest Scores")
+        print("[L]owest to Highest Scores")
+
+        choice = input("\nChoose an option: ")
+        choice = choice.upper()  # uppercases the users choices
+
+        print("\n" * 2)
+
+        if (choice == "H"):  # descending order
+            dispHighLow(scoreList)
+            pause()
+
+        elif (choice == "L"):  # ascending order
+            dispLowHigh(scoreList)
+            pause()
+
+        else:  # if neither H or L is chosen
+            print("CHOOSE A VALID OPTION")
+            pause()
+
+    else:  # if the list is empty, yell at the user
+        marquee("The list is empty.", "*")
+        pause()
+
+
+# -----------------------------------------------
+# displays scores highest to lowest, with respective letter grades
+def dispHighLow(examScores):
+    print("Highest to Lowest Grades")
+    print("-" * 23, "\n")  # header
+
+    examScores.sort(reverse=True)
+
+    for item in examScores:  # iterates through the list, prints letter grade and number
+        gradeLetter(item)
+    # for loop prints grades vertically
+
+
+# -----------------------------------------------
+# displays scores lowest to highest, with respective letter grades
+def dispLowHigh(examScores):
+    print("Lowest to Highest Grades")
+    print("-" * 23, "\n")  # header
+
+    examScores.sort()
+
+    for item in examScores:  # iterates through the list, prints letter grade and number
+        gradeLetter(item)
+    # for loop prints grades vertically
+
+
+# --------------------------------------------------
+# creates main menu
+def getChoice():
+    marquee("M A I N  M E N U")
+
+    print("[I]nput Scores.")  # input scores until -999 is entered
+    print("[D]isplay Sorted Scores.")  # display scores sorted by ascending and descending
+    print("[S]tatistics of Scores.")  # lowest, highest, average, and letter grades
+    print("[A]djust Scores.")  # adjust scores by subtracting 5 and they can be no less than 0
+    print("[R]emove F's.")  # any grades that fall under 60% will be deleted
+    print("[Q]uit.")  # exit the program
+
+    choice = input("Enter a choice from the main menu: ")  # takes the user input to select their option
+
+    choice = choice.upper()  # capitalizes the user's input
+
+    return choice  # returns the choice into main
+
+
+# -------------------------------------------------
+# easier function to print grade letter next to the grade number
+def gradeLetter(num):
+    if (num > 89):
+        print("A -", num)
+    elif (num > 79):
+        print("B -", num)
+    elif (num > 69):
+        print("C -", num)
+    elif (num > 59):
+        print("D -", num)
+    else:
+        print("F -", num)
+
+
+# -------------------------------------------------
+# same function as gradeLetter but returning
+def gradeLetterRet(num):
+    if (num > 89):
+        return ("A")
+    elif (num > 79):
+        return ("B")
+    elif (num > 69):
+        return ("C")
+    elif (num > 59):
+        return ("D")
+    else:
+        return ("F")
+
+
+# -------------------------------------------------
+# aquires user input to fill a list with grade scores and stops at -999
+def inputScores(scores):
+    print("Choose how many inputs.")
+    print("-" * 13)
+    print()
+
+    print("[A]dd One Score")
+    print("[P]ut Multiple Scores")
+
+    choice = input("Choose an option: ")
+
+    choice = choice.upper()
+
+    print()
+
+    if (choice == 'A'):
+        oneScore(scores)  # runs the function one score to only add one score
+        pause()
+    elif (choice == 'P'):
+        addScore = True
+
+        while (addScore):
+            try:  # to take user back to Input instead of Main Menu if wrong value entered
+
+                score = round(float(input("Enter an exam score between 0 to 100, or type -999 to stop: ")), 2)
+                # takes in user input, prompts them to continue or stop at -999
+
+                if (score >= 0 and score <= 100):
+                    # after a score has been inputed, it will add to the list
+                    scores.append(score)
+
+                elif (score == (-999)):  # if -999 is inputed it will stop the while loop
+                    print()
+                    addScore = False
+                    pause()
+
+                else:  # prompts the user to type in a valid exam score
+                    print()
+                    print("Enter a score between 0 and 100.")
+                    pause()
+
+            except ValueError:  # if user inputs anything else other than a number
+                print()
+                marquee("That's not a number.", "*")
+                pause()
+    else:
+        marquee("ENTER A VALID OPTION!")
+        pause()
+
+
+# -----------------------------------------------
+# creates a border around any given string
+def marquee(mess, sym="="):
+    print(sym * (len(mess) + 6))
+    print((sym * 2), mess, (sym * 2))
+    print(sym * (len(mess) + 6))
+
+
+# -----------------------------------------------
+# input one exam score
+def oneScore(scores):
+    valid = True
+
+    while (valid):
+        try:
+            score = round(float(input("Enter the exam score: ")), 2)  # takes in one score, can be decimal
+            if (0 <= score <= 100):
+                scores.append(score)
+
+                return scores
+                valid = False
+
+            else:
+                print("INVALID SCORE! Score must be between 0 and 100.")
+                pause()  # if out of range, yell at user
+
+        except ValueError:
+            print("INVALID INPUT! Please enter a valid number.")  # if letter, yell at user
+            pause()
+
+
+# -------------------------------------------------
+# pauses the program so the user can see the outputs
+def pause():
+    print()
+
+    temp = input("\nDone!\nPress ENTER to continue....")
+
+    print("\n" * 5)
+
+
+# -------------------------------------------------
+# remove all F's from the list and print out the new results.
+def removeFPerm(scoreList):
+    fGone = []  # new modifiable list
+    for item in scoreList:
+
+        if (item > 59):
+            fGone.append(item)  # only adds numbers that are greater than 59 into the list
+
+    return fGone
+
+
+# ------------------------------------------
+# cleans up main, prints removed F scores
+def removeFPrint(examScores):
+    if (len(examScores) != 0):  # the list is not empty, continue
+
+        marquee("Old Scores", "~")
+
+        for item in examScores:  # displays original scores
+            gradeLetter(item)
+
+        examScores = removeFPerm(examScores)  # changes the list to remove Fs
+
+        print()
+
+        marquee("Without Fs", "~")
+
+        if (len(examScores) != 0):
+            for item in examScores:  # shows list without Fs
+                gradeLetter(item)
+        else:
+            print("The list is now empty.")
+
+        pause()
+    else:  # if list is empty, yell at user
+        marquee("The list is empty.", "*")
+        pause()
+
+
+# -----------------------------------------------
+# outputs the current list, max number, min number, and average within the list
+def statsOfScores(scores):
+    if (len(scores) != 0):  # works as a try-except as to not run an error with an empty list
+
+        maxNum = max(scores)  # returns largest number in the list
+        minNum = min(scores)  # returns smallest number in the list
+        avgNum = round((sum(scores) / len(scores)), 2)  # takes in the sum of the list divided by the length of the list
+        # then rounds the result to the nearest 2 decimal places
+
+        marquee("Exam Stats", "~")
+        print()
+
+        print("Scores Recieved", "\n" + "-" * 17)
+
+        for item in scores:  # prints every grade in the list with its grade letter
+            gradeLetter(item)
+
+        print("\nHighest score:")
+        gradeLetter(maxNum)  # prints the HIGHEST score with the grade letter
+
+        print("\nLowest score:")
+        gradeLetter(minNum)  # prints the LOWEST score with the grade letter
+
+        print("\nAverage score:")
+        gradeLetter(avgNum)  # prints the AVERAGE score with the grade letter
+
+        aCount = 0
+        bCount = 0
+        cCount = 0
+        dCount = 0
+        fCount = 0
+        # counts how many A, B, C, D, and F are in the list
+        for item in scores:
+            if (item > 89):
+                aCount += 1
+            elif (item > 79):
+                bCount += 1
+            elif (item > 69):
+                cCount += 1
+            elif (item > 59):
+                dCount += 1
+            else:
+                fCount += 1
+
+        print("\nNumber of possible grades", "\n" + "-" * 26, "\nA's -", aCount, "\nB's -", bCount,
+              "\nC's -", cCount, "\nD's -", dCount, "\nF's -", fCount)
+
+        pause()
+    else:
+        marquee("The list is empty.", "*")
+        pause()
+
+
+# -----------------------------------------------
+
+main()
